@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hirono Series Guide</title> <!-- JSON ACTIVITY -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --terracotta: #c0584a;
+      --terra-dark: #a84538;
+      --dark-text: #2b2b2b;
+      --muted: #6b6b6b;
+      --border: #d9d0c0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--cream);
+      color: var(--dark-text);
+      overflow-x: hidden;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      background-color: var(--terracotta);
+      color: var(--cream);
+      padding: 70px 0 80px;
+    }
+
+    header .hello-text {
+      font-size: 0.9rem;
+      color: rgba(245, 240, 232, 0.8);
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      animation: slideUp 0.6s 0.2s ease both;
+    }
+
+    header h1 {
+      font-family: 'Courier Prime', monospace;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 6px;
+      animation: slideUp 0.7s 0.35s ease both;
+    }
+
+    header .subtitle {
+      font-size: 1rem;
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.9);
+      margin-bottom: 24px;
+      animation: slideUp 0.7s 0.5s ease both;
+    }
+
+    header .search-wrap {
+      animation: slideUp 0.7s 0.65s ease both;
+    }
+
+    .divider {
+      width: 40px;
+      height: 3px;
+      border-radius: 2px;
+      background-color: var(--cream);
+      margin: 14px auto;
+    }
+
+    .input-group-text,
+    .form-control {
+      background-color: transparent;
+      color: var(--cream);
+      border: 1.5px solid rgba(245, 240, 232, 0.5);
+    }
+
+    .input-group-text {
+      border-radius: 30px 0 0 30px;
+      padding-left: 20px;
+    }
+
+    .form-control {
+      border-radius: 0 30px 30px 0;
+    }
+
+    .form-control:focus {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--cream);
+      border-color: var(--cream);
+      box-shadow: none;
+    }
+
+    .form-control::placeholder {
+      color: rgba(245, 240, 232, 0.6);
+    }
+
+    .hirono-card {
+      height: 100%;
+      background-color: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+    }
+
+    .hirono-card.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hirono-card.revealed:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+      border-color: var(--terracotta);
+    }
+
+    .img-wrap {
+      height: 320px;
+      background-color: var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+      font-size: 3rem;
+    }
+
+    .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .hirono-card:hover .img-wrap img {
+      transform: scale(1.08);
+    }
+
+    .series-title {
+      font-family: 'Courier Prime', monospace;
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+
+    .series-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .series-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .figure-badge {
+      display: inline-block;
+      border: 1.5px solid var(--border);
+      border-radius: 30px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      margin: 3px 3px 3px 0;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+
+    .figure-badge:hover {
+      border-color: var(--terracotta);
+      color: var(--terracotta);
+      transform: scale(1.08);
+    }
+
+    .no-figures {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    .btn-shop {
+      background-color: var(--terracotta);
+      color: var(--cream);
+      border: 2px solid var(--terracotta);
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+    }
+
+    .btn-shop:hover {
+      background-color: var(--terra-dark);
+      border-color: var(--terra-dark);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    .btn-more {
+      background-color: transparent;
+      color: var(--terracotta);
+      border: 2px solid var(--terracotta);
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s;
+    }
+
+    .btn-more:hover {
+      background-color: var(--terracotta);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    footer {
+      background-color: var(--terra-dark);
+      color: rgba(245, 240, 232, 0.5);
+      text-align: center;
+      padding: 20px 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    #scrollTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--terracotta);
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 999;
+    }
+
+    #scrollTop.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #scrollTop:hover {
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="container-fluid p-3 text-center">
+    <h1>Hirono Series Guide</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Find your next favorite Hirono series.</p>
+    <div class="row justify-content-center search-wrap">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <input type="text" id="search" class="form-control" placeholder="Series or figure name..."
+            oninput="showHirono()">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container py-5">
+    <div class="row g-4" id="parent">
+
+
+
+    </div>
+  </div>
+
+  <footer>
+    <p class="mb-0">2026 &nbsp; All Figures by POPMART</p>
+  </footer>
+
+  <button id="scrollTop" title="Back to top">
+    <i class="bi bi-chevron-up"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
+  <script>
+    var hirono = [
+      {
+        title: "The Other One",
+        image: "Assets/other-one.jpg",
+        description: "The Hirono The Other One series captivates collectors with its intriguing and diverse characters, each symbolizing a unique facet of the human experience.",
+        figures: ["Amnesia", "Cuckoo", "Marionette", "Staring", "The Fox", "The Crow", "The Monster", "Being Alive", "Raving", "Nowhere Safe", "Ghost", "Vagrancy", "Dreaming(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-the-other-one-series/3eff2089-5489-47c6-8179-e27e80804456",
+        moreUrl: "https://hironoworld.com/series/hirono-the-other-one-series/"
+      }, {
+        title: "Little Mischief",
+        image: "Assets/little-mischief.jpg",
+        description: "The HIRONO Little Mischief series is a playful and imaginative collection that brings to life Hirono’s mischievous and adventurous spirit.",
+        figures: ["Float", "Manacle", "Ragpicker", "Destroyer", "Robot", "Boiling Frog", "The Aviator", "Birdman", "Loose Fish", "Pretender", "Persona", "Protector", "Unknown Journey(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-little-mischief-series/58f4d2c5-e2ef-4e80-aa25-c6cbb08e218d",
+        moreUrl: "https://hironoworld.com/series/hirono-little-mischief-series/"
+      }, {
+        title: "Mime",
+        image: "Assets/mime.jpg",
+        description: "The HIRONO Mime series is a hauntingly beautiful collection that explores the unspoken emotions and hidden depths of the human experience.",
+        figures: ["Fool", "Guardian", "Blind", "Seeker", "Devilry", "Drifter", "Unspoken", "Patience", "Prison", "Destroy", "Poem", "Secrecy", "Silent(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/pop-now/box-set/hirono-mime-series-figures/506540b8-7924-48af-9022-e353d7309135",
+        moreUrl: "https://hironoworld.com/series/hirono-mime-series/"
+      }, {
+        title: "Reshape",
+        image: "Assets/reshape.jpg",
+        description: "The HIRONO Reshape series is a stunning exploration of transformation, growth, and the interplay between fragility and resilience.",
+        figures: ["Woodcarving", "Burst", "Drowning", "Fading", "Paradise Lost", "Costume", "Parasite", "Voyage", "Healing", "Puppet(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-reshape-series-figures/6b3117c5-3cb9-4c91-a8a3-193f8f53dbda",
+        moreUrl: "https://hironoworld.com/series/hirono-reshape-series/"
+      }, {
+        title: "Shelter",
+        image: "Assets/shelter.jpg",
+        description: "The HIRONO Shelter series invites collectors into a world of refuge and security, with each figure representing a unique form of shelter and protection.",
+        figures: ["Poet", "Circus", "Warrior", "Candleholder", "Birdcage", "Fort", "Cabin", "Sunny Doll", "Alien", "Mantel Clock", "Traffic Cone", "Birdy", "Stuffed Bear(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-shelter-series-figures/b6dd763e-f7d6-453f-b279-e87e530644f2",
+        moreUrl: "https://hironoworld.com/series/hirono-shelter-series/"
+      }, {
+        title: "Le Petit Prince",
+        image: "Assets/le-petit-prince.jpg",
+        description: "The HIRONO Le Petit Prince series brings to life the timeless charm and profound lessons of the classic tale, reimagined through Hirono’s creative lens.",
+        figures: ["The Switchman", "The Geographer", "The Lamplighter", "The King", "The Fox", "The Tippler", "The Conceited Man", "The Rose", "The Businessman", "The Snake", "The Little Prince", "The Merchant", "The Pilot(Secret)", "The Little Prince - Special Edition(Super Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hironole-petit-prince-series-figures/d75833be-8dbf-49d3-8465-24710449fc7d",
+        moreUrl: "https://hironoworld.com/series/hirono-le-petit-prince-series/"
+      }, {
+        title: "Echo",
+        image: "Assets/echo.jpg",
+        description: "The HIRONO Echo's design captures childhood’s fleeting moments. Plus, the emotional depth shines through every quirky pose. Whether it’s bold sass or a tender glow, these figures speak to collectors.",
+        figures: ["Back Off", "Knight", "Caught You", "Daydreaming", "Journey in the Rain", "Eaten", "Hiding Behind You", "Get Lucky", "Soul Connection", "Pieces Of Memory", "Staying Up", "Breakout Plan", "Never Growing Up (Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-echo-series-figures/f08eabf1-d477-4761-82e5-44e2fdfe0c6f",
+        moreUrl: "https://hironoworld.com/series/hirono-echo-series/"
+      }, {
+        title: "Tamed WildGrass",
+        image: "Assets/tamed-wildgrass.jpg",
+        description: "The HIRONO Tamed Wildgrass explore how city life shapes individuals. Wildgrass naturally grows freely, but in the city, people often suppress their natural impulses to fit societal expectations.",
+        figures: ["Sisyphean Work", "Caged Bird", "Full-time", "Camping", "Self-Anchored", "Boiling Frog", "City Escape", "Fated", "Digital Bind", "Live Under Receipts", "Overload", "Canned Dreams", "Boundary(Secret)"],
+        shopUrl: "https://www.popmart.com/ph/products/hirono-tamed-wildgrass-series-figures/734d6288-a950-4eca-b6cf-5f7b59e43e8d",
+        moreUrl: "https://hironoworld.com/series/hirono-tamed-wildgrass-series/"
+      }, {
+        title: "City of Mercy",
+        image: "Assets/city-of-mercy.jpg",
+        description: "The HIRONO City of Mercy series delves into a world of emotion, introspection, and connection, bringing together figures that tell a poignant and meaningful story.",
+        figures: ["Echo", "Healer", "Insight", "Fallen Angel", "Confortably Numb", "The Other", "Belonging(Secret)"],
+        shopUrl: "https://www.popmart.com/gb/products/-hirono-city-of-mercy-series/fd9a7a86-4bbe-432e-9a83-89d375e9670d",
+        moreUrl: "https://hironoworld.com/series/hirono-city-of-mercy-series/"
+      }
+    ]
+
+    var parent = document.getElementById("parent");
+
+    function showHirono() {
+      var search = document.getElementById("search").value.toLowerCase();
+      parent.innerHTML = "";
+
+      for (var i = 0; i < hirono.length; i++) {
+        var details = hirono[i].title + " " + hirono[i].description + " " + hirono[i].figures.join(" ");
+
+        if (details.toLowerCase().includes(search)) {
+
+          var figuresHTML = "";
+          if (hirono[i].figures.length == 0) {
+            figuresHTML = `<span class="no-figures">No figures listed yet</span>`;
+          } else {
+            for (var j = 0; j < hirono[i].figures.length; j++) {
+              figuresHTML += `<span class="figure-badge">` + hirono[i].figures[j] + `</span>`;
+            }
+          }
+
+          parent.innerHTML += `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="hirono-card">
+                <div class="img-wrap">
+                  <img src="` + hirono[i].image + `" alt="` + hirono[i].title + `" onerror="this.style.display='none'">
+                </div>
+                <div class="p-4 d-flex flex-column flex-grow-1">
+                  <span class="series-label">Hirono Series</span>
+                  <p class="series-title mb-2">` + hirono[i].title + `</p>
+                  <p class="series-desc">` + hirono[i].description + `</p>
+                  <div class="mb-3">
+                    <span class="series-label d-block mb-1">Figures</span>
+                    ` + figuresHTML + `
+                  </div>
+                  <div class="d-flex gap-2 mt-auto">
+                    <a href="` + hirono[i].shopUrl + `" class="btn btn-shop flex-fill" target="_blank" rel="noopener noreferrer">Shop</a>
+                    <a href="` + hirono[i].moreUrl + `" class="btn btn-more flex-fill" target="_blank" rel="noopener noreferrer">Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      if (parent.innerHTML == "") {
+        parent.innerHTML = `<p class="text-center" style="color: var(--muted);">No Hirono series found.</p>`;
+      }
+
+      revealCards();
+    }
+
+    // Cards reveal (staggered)
+    var cardObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry, i) {
+        if (entry.isIntersecting) {
+          setTimeout(function () {
+            entry.target.classList.add('revealed');
+          }, i * 150);
+          cardObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    function revealCards() {
+      var cards = document.querySelectorAll('.hirono-card');
+      cards.forEach(function (c) { cardObs.observe(c); });
+    }
+
+    // Scroll to top
+    var scrollBtn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', function () {
+      scrollBtn.classList.toggle('visible', window.scrollY > 300);
+    });
+    scrollBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    showHirono();
+  </script>
+
+</body>
+
+</html>
