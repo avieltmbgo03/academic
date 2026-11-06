@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Character Dex — Rick and Morty API</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --bg: #f5f0e8;
+      --bg-2: #d9d0c0;
+      --panel: #f5f0e8;
+      --panel-2: #efe8da;
+      --line: #d9d0c0;
+      --line-2: #d9d0c0;
+      --text: #2b2b2b;
+      --muted: #6b6b6b;
+      --accent: #c0584a;
+      --accent-dark: #a84538;
+      --accent-dim: rgba(192, 88, 74, .14);
+      --alive: #5f8f5a;
+      --dead: #a84538;
+      --unknown: #8a8578;
+      --display: 'Inter', sans-serif;
+      --mono: 'Courier Prime', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { color-scheme: light; }
+
+    body {
+      background-color: var(--bg);
+      overflow-x: hidden;
+      color: var(--text);
+      font-family: var(--display);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap { width: 100%; max-width: none; margin: 0; padding: 0 24px; }
+
+    /* Top bar */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 22px 24px; background: var(--accent);
+      font-family: var(--display); font-size: 15px; font-weight: 500; color: var(--cream);
+    }
+    .brand { font-family: var(--mono); font-weight: 700; font-size: 1.3rem; color: #fff; }
+    .topbar a {
+      position: relative; color: var(--cream); text-decoration: none; padding: 6px 0;
+      transition: opacity .2s;
+    }
+    .topbar a::after {
+      content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px;
+      background: var(--cream); transition: width .3s ease;
+    }
+    .topbar a:hover::after { width: 100%; }
+
+    /* Hero */
+    .hero { padding: 28px 0 0; }
+
+    /* Controls */
+    .controls { display: flex; gap: 12px; flex-wrap: wrap; }
+    .search {
+      flex: 1 1 280px; position: relative;
+    }
+    .search svg {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      width: 17px; height: 17px; stroke: var(--muted); fill: none; stroke-width: 2;
+    }
+    .search input {
+      width: 100%; background: transparent; border: 1.5px solid var(--line);
+      color: var(--text); font: 400 15px var(--display); padding: 13px 20px 13px 46px;
+      border-radius: 30px; outline: none; transition: border-color .15s, box-shadow .15s;
+    }
+    .search input::placeholder { color: var(--muted); }
+    .search input:focus { border-color: var(--accent); box-shadow: none; }
+
+    .seg {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .seg button {
+      background: transparent; border: 1.5px solid var(--line); color: var(--text); cursor: pointer;
+      font: 500 14px var(--display); padding: 11px 20px; border-radius: 30px;
+      transition: border-color .2s, color .2s, background-color .2s, transform .2s;
+    }
+    .seg button:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.05); }
+    .seg button.on { background: var(--accent); border-color: var(--accent); color: var(--cream); }
+
+    /* Grid */
+    .section-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin: 44px 0 0; font-family: var(--display); font-size: 14px; color: var(--muted);
+    }
+    .section-head .title {
+      font-family: var(--mono); font-size: 1.7rem; font-weight: 700; color: var(--text); line-height: 1.2;
+    }
+    .section-divider {
+      width: 40px; height: 3px; background: var(--accent); border-radius: 2px;
+      margin: 6px 0 30px;
+    }
+    .grid {
+      display: grid; gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    }
+    .card {
+      position: relative; background: #111; border: 0; display: flex; flex-direction: column;
+      border-radius: 10px; overflow: hidden; cursor: pointer; text-align: left;
+      color: inherit; font: inherit; padding: 0;
+      transition: transform .3s ease, box-shadow .3s ease;
+      animation: rise .5s ease both;
+    }
+    .card:hover, .card:focus-visible {
+      transform: translateY(-8px) scale(1.01); box-shadow: 0 20px 40px rgba(0, 0, 0, .18); outline: none;
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+    .card .thumb { position: relative; aspect-ratio: 1; background: var(--bg-2); overflow: hidden; flex: none; }
+    .card .thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform .5s ease;
+    }
+    .card:hover .thumb img { transform: scale(1.08); }
+    .card .id {
+      position: absolute; top: 10px; left: 10px; font: 500 11px var(--mono);
+      background: rgba(43, 43, 43, .75); backdrop-filter: blur(6px);
+      padding: 4px 8px; border-radius: 6px; color: var(--cream);
+    }
+    .card .body { background: var(--accent); padding: 16px 18px; flex: 1; transition: background-color .3s; }
+    .card:hover .body { background: var(--accent-dark); }
+    .card .name {
+      font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card .sub {
+      display: flex; align-items: center; gap: 8px;
+      font: 400 13px var(--display); color: rgba(255, 255, 255, .85);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+    .dot.Alive { background: var(--alive); }
+    .dot.Dead { background: var(--dead); }
+    .dot.unknown { background: var(--unknown); }
+    .card .dot { box-shadow: 0 0 0 2px rgba(245, 240, 232, .85); }
+    .card .dot.Alive { background: #6fbf73; }
+    .card .dot.Dead { background: #2b2b2b; }
+    .card .dot.unknown { background: #d9d0c0; }
+
+    /* Skeleton */
+    .skel { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+    .skel .a { aspect-ratio: 1; }
+    .skel .b { height: 66px; }
+    .skel .a, .skel .b {
+      background: linear-gradient(100deg, var(--panel) 30%, var(--panel-2) 50%, var(--panel) 70%);
+      background-size: 200% 100%; animation: shimmer 1.3s infinite linear;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* Empty / error */
+    .state {
+      grid-column: 1 / -1; border: 1.5px dashed var(--line-2); border-radius: 10px;
+      padding: 64px 24px; text-align: center;
+    }
+    .state .code { font: 700 44px var(--mono); color: var(--accent); letter-spacing: -.02em; }
+    .state.bad .code { color: var(--dead); }
+    .state p { margin-top: 10px; color: var(--muted); }
+
+    /* Pager */
+    .pager {
+      display: flex; justify-content: center; align-items: center; gap: 18px;
+      margin: 40px 0 72px; font-family: var(--display); font-size: 14px; color: var(--muted);
+    }
+    .pager[hidden] { display: none; }
+    .pager button {
+      background: transparent; color: var(--accent); border: 2px solid var(--accent);
+      font: 600 14px var(--display); padding: 8px 24px; border-radius: 30px; cursor: pointer;
+      transition: all .25s;
+    }
+    .pager button:hover:not(:disabled) { background: var(--accent); color: var(--cream); transform: translateY(-2px); }
+    .pager button:disabled { opacity: .35; cursor: not-allowed; }
+    .pager b { color: var(--text); font-weight: 500; }
+
+    footer {
+      background: var(--accent); padding: 26px 24px 40px;
+      font: 400 12.8px var(--display); letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(245, 240, 232, .8);
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    footer a { color: var(--cream); text-decoration: none; border-bottom: 1px solid rgba(245, 240, 232, .45); }
+    footer a:hover { color: #fff; border-color: #fff; }
+
+    /* Dialog */
+    dialog {
+      margin: auto; width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 32px);
+      background: var(--panel); color: var(--text); border: 0;
+      border-radius: 10px; padding: 0; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(43, 43, 43, .3);
+    }
+    dialog::backdrop { background: rgba(43, 43, 43, .55); backdrop-filter: blur(6px); }
+    dialog[open] { animation: pop .25s ease; }
+    @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+
+    .dlg-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid var(--line);
+      font: 400 12px var(--display); color: var(--muted);
+    }
+    .dlg-head .tabs { display: flex; gap: 6px; }
+    .dlg-head .tabs button {
+      background: transparent; border: 1.5px solid var(--line); color: var(--text); font: 500 13px var(--display);
+      padding: 6px 16px; border-radius: 30px; cursor: pointer; transition: border-color .2s, color .2s;
+    }
+    .dlg-head .tabs button:hover { border-color: var(--accent); color: var(--accent); }
+    .dlg-head .tabs button.on { background: var(--accent); border-color: var(--accent); color: var(--cream); }
+    .dlg-head .x {
+      background: none; border: 1.5px solid var(--line); color: var(--muted);
+      width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px;
+      transition: border-color .2s, color .2s;
+    }
+    .dlg-head .x:hover { color: var(--accent); border-color: var(--accent); }
+
+    .dlg-body { overflow-y: auto; max-height: calc(100vh - 100px); }
+    .detail { display: grid; grid-template-columns: 260px 1fr; }
+    .detail .pic { background: var(--bg-2); }
+    .detail .pic img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 260px; }
+    .detail .info { padding: 26px 28px; }
+    .detail h2 { font-family: var(--mono); font-weight: 700; font-size: 1.7rem; line-height: 1.15; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 12px;
+      font: 500 13px var(--display); color: var(--muted);
+    }
+    dl { margin-top: 22px; display: grid; grid-template-columns: 110px 1fr; font-size: 14px; }
+    dt, dd { padding: 11px 0; border-top: 1px solid var(--line); }
+    dt { font: 500 13px var(--display); color: var(--muted); padding-top: 12px; }
+    dd { font-weight: 500; }
+
+    pre.json {
+      padding: 22px 26px; font: 400 12.5px/1.7 var(--mono); color: #4a4a4a;
+      overflow-x: auto; white-space: pre;
+    }
+    pre.json .k { color: var(--accent); }
+    pre.json .s { color: #4f7a5a; }
+    pre.json .n { color: #a8741f; }
+    pre.json .b { color: #8a4b6e; }
+
+    #scrollTop {
+      position: fixed; bottom: 30px; right: 30px; width: 42px; height: 42px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s; z-index: 999;
+    }
+    #scrollTop svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+    #scrollTop.visible { opacity: 1; pointer-events: all; }
+    #scrollTop:hover { transform: translateY(-3px); }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 0 16px; }
+      .topbar, footer { padding-left: 16px; padding-right: 16px; }
+      .hero { padding-top: 20px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .seg { width: 100%; }
+      .seg button { flex: 1; padding: 10px 6px; }
+      .brand { font-size: 1.05rem; }
+      .card .body { padding: 12px 14px; }
+      .detail { grid-template-columns: 1fr; }
+      .detail .pic img { min-height: 0; aspect-ratio: 1; max-height: 300px; }
+      .detail .info { padding: 22px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+      <div class="brand">Rick and Morty Character Dex</div>
+      <a href="https://rickandmortyapi.com/documentation" target="_blank" rel="noopener">API documentation &#8599;</a>
+  </header>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="controls">
+        <label class="search">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="searchInput" placeholder="Search by name, e.g. rick" autocomplete="off" aria-label="Search characters by name">
+        </label>
+        <div class="seg" id="statusSeg" role="group" aria-label="Filter by status">
+          <button class="on" data-v="">All</button>
+          <button data-v="alive">Alive</button>
+          <button data-v="dead">Dead</button>
+          <button data-v="unknown">Unknown</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-head"><span class="title">Results</span><span id="countInfo"></span></div>
+    <div class="section-divider"></div>
+    <div class="grid" id="grid"></div>
+
+    <div class="pager" id="pager" hidden>
+      <button id="prevBtn">&larr; Prev</button>
+      <span id="pageInfo"></span>
+      <button id="nextBtn">Next &rarr;</button>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>Data from <a href="https://rickandmortyapi.com" target="_blank" rel="noopener">rickandmortyapi.com</a></span>
+    <span>Unofficial fan project</span>
+  </footer>
+
+  <button id="scrollTop" title="Back to top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg>
+  </button>
+
+  <dialog id="dlg">
+    <div class="dlg-head">
+      <div class="tabs">
+        <button class="on" data-tab="details">Details</button>
+        <button data-tab="json">JSON</button>
+      </div>
+      <button class="x" id="closeBtn" aria-label="Close">&times;</button>
+    </div>
+    <div class="dlg-body" id="dlgBody"></div>
+  </dialog>
+
+  <script>
+    const API = 'https://rickandmortyapi.com/api/character';
+    const PER_PAGE = 24, API_PER_PAGE = 20;
+
+    const $ = id => document.getElementById(id);
+    const elGrid = $('grid');
+    const elSearch = $('searchInput'), elSeg = $('statusSeg'), elPager = $('pager');
+    const elPrev = $('prevBtn'), elNext = $('nextBtn'), elPageInfo = $('pageInfo'), elCount = $('countInfo');
+    const dlg = $('dlg'), dlgBody = $('dlgBody');
+
+    let page = 1, totalPages = 1, status = '', characters = [], current = null, tab = 'details';
+    let controller = null, debounce = null;
+
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const pad = n => String(n).padStart(3, '0');
+
+    function skeletons() {
+      elGrid.innerHTML = Array.from({ length: 24 }, () => '<div class="skel"><div class="a"></div><div class="b"></div></div>').join('');
+    }
+
+    function stateBox(code, msg, bad) {
+      elGrid.innerHTML = '<div class="state' + (bad ? ' bad' : '') + '"><div class="code">' + code + '</div><p>' + esc(msg) + '</p></div>';
+    }
+
+    async function getCharacters() {
+      if (controller) controller.abort();
+      controller = new AbortController();
+
+      const base = new URLSearchParams();
+      const name = elSearch.value.trim();
+      if (name) base.set('name', name);
+      if (status) base.set('status', status);
+
+      // The API serves 20 per page; we show 24 so rows fill evenly (2, 3, 4, 6, 8 columns)
+      const start = (page - 1) * PER_PAGE;
+      const firstApiPage = Math.floor(start / API_PER_PAGE) + 1;
+      const fetchApiPage = n => {
+        const p = new URLSearchParams(base);
+        p.set('page', n);
+        return fetch(API + '?' + p, { signal: controller.signal });
+      };
+
+      elPager.hidden = true;
+      skeletons();
+
+      try {
+        const res = await fetchApiPage(firstApiPage);
+
+        // The API answers 404 when nothing matches the search
+        if (res.status === 404) {
+          characters = [];
+          elCount.textContent = '0 matches';
+          stateBox('404', 'No characters match that search. Try a different name or status.', false);
+          return;
+        }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+
+        const data = await res.json();
+        const total = data.info.count;
+        const end = Math.min(start + PER_PAGE, total);
+        let items = data.results;
+        let nextApiPage = firstApiPage + 1;
+        while ((firstApiPage - 1) * API_PER_PAGE + items.length < end && nextApiPage <= data.info.pages) {
+          const more = await fetchApiPage(nextApiPage);
+          if (!more.ok) break;
+          items = items.concat((await more.json()).results);
+          nextApiPage++;
+        }
+        const offset = start - (firstApiPage - 1) * API_PER_PAGE;
+        characters = items.slice(offset, offset + PER_PAGE);
+        totalPages = Math.ceil(total / PER_PAGE);
+        render(total);
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        characters = [];
+        elCount.textContent = '';
+        stateBox('ERR', 'Could not reach the API. ' + err.message, true);
+      }
+    }
+
+    function render(total) {
+      elGrid.innerHTML = characters.map((c, i) => `
+        <button class="card" data-id="${c.id}" style="animation-delay:${i * 25}ms">
+          <div class="thumb">
+            <img src="${esc(c.image)}" alt="${esc(c.name)}" loading="lazy">
+            <span class="id">#${pad(c.id)}</span>
+          </div>
+          <div class="body">
+            <div class="name">${esc(c.name)}</div>
+            <div class="sub"><span class="dot ${esc(c.status)}"></span>${esc(c.status)} &middot; ${esc(c.species)}</div>
+          </div>
+        </button>`).join('');
+
+      elCount.textContent = total + (total === 1 ? ' match' : ' matches');
+      elPageInfo.innerHTML = 'page <b>' + page + '</b> / ' + totalPages;
+      elPrev.disabled = page <= 1;
+      elNext.disabled = page >= totalPages;
+      elPager.hidden = false;
+    }
+
+    function highlight(obj) {
+      const json = esc(JSON.stringify(obj, null, 2));
+      return json.replace(/(&quot;(?:\\.|[^&\\])*?&quot;)(\s*:)?|\b(true|false|null)\b|(-?\d+(?:\.\d+)?)/g,
+        (m, str, colon, bool, num) => {
+          if (str) return colon ? '<span class="k">' + str + '</span>' + colon : '<span class="s">' + str + '</span>';
+          if (bool) return '<span class="b">' + bool + '</span>';
+          return '<span class="n">' + num + '</span>';
+        });
+    }
+
+    function paintDialog() {
+      const c = current;
+      if (!c) return;
+      document.querySelectorAll('.dlg-head .tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+
+      if (tab === 'json') {
+        dlgBody.innerHTML = '<pre class="json">' + highlight(c) + '</pre>';
+        return;
+      }
+      dlgBody.innerHTML = `
+        <div class="detail">
+          <div class="pic"><img src="${esc(c.image)}" alt="${esc(c.name)}"></div>
+          <div class="info">
+            <h2>${esc(c.name)}</h2>
+            <div class="badge"><span class="dot ${esc(c.status)}"></span>${esc(c.status)} &middot; #${pad(c.id)}</div>
+            <dl>
+              <dt>species</dt><dd>${esc(c.species)}</dd>
+              <dt>type</dt><dd>${esc(c.type || 'None')}</dd>
+              <dt>gender</dt><dd>${esc(c.gender)}</dd>
+              <dt>origin</dt><dd>${esc(c.origin.name)}</dd>
+              <dt>last seen</dt><dd>${esc(c.location.name)}</dd>
+              <dt>episodes</dt><dd>${c.episode.length}</dd>
+            </dl>
+          </div>
+        </div>`;
+    }
+
+    function openCharacter(id) {
+      current = characters.find(x => String(x.id) === String(id));
+      if (!current) return;
+      tab = 'details';
+      paintDialog();
+      dlg.showModal();
+    }
+
+    // Events
+    elSearch.addEventListener('input', () => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => { page = 1; getCharacters(); }, 350);
+    });
+    elSeg.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      elSeg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+      status = b.dataset.v;
+      page = 1;
+      getCharacters();
+    });
+    elPrev.addEventListener('click', () => { if (page > 1) { page--; getCharacters(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+    elNext.addEventListener('click', () => { if (page < totalPages) { page++; getCharacters(); window.scrollTo({ top: 0, behavior: 'smooth' }); } });
+    elGrid.addEventListener('click', e => {
+      const card = e.target.closest('.card');
+      if (card) openCharacter(card.dataset.id);
+    });
+    document.querySelector('.dlg-head .tabs').addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (b) { tab = b.dataset.tab; paintDialog(); }
+    });
+    $('closeBtn').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+
+    // Scroll to top
+    const scrollBtn = $('scrollTop');
+    window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.scrollY > 300));
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    getCharacters();
+  </script>
+</body>
+
+</html>
