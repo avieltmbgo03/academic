@@ -44,7 +44,6 @@
 
     .wrap { width: 100%; max-width: none; margin: 0; padding: 0 24px; }
 
-    /* Top bar */
     .topbar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 22px 24px; background: var(--accent);
@@ -61,10 +60,8 @@
     }
     .topbar a:hover::after { width: 100%; }
 
-    /* Hero */
     .hero { padding: 28px 0 0; }
 
-    /* Controls */
     .controls { display: flex; gap: 12px; flex-wrap: wrap; }
     .search {
       flex: 1 1 280px; position: relative;
@@ -273,10 +270,112 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
+
+    /* ===== Multiverse extras ===== */
+    .banner { padding: 6px 0 22px; }
+    .banner .kicker { font: 500 12px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+    .banner h1 { font: 700 clamp(1.7rem, 4.5vw, 2.6rem)/1.15 var(--mono); margin-top: 6px; }
+    .banner p { color: var(--muted); margin-top: 8px; max-width: 560px; }
+    .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+    .chips .lbl { font: 500 13px var(--display); color: var(--muted); margin-right: 4px; }
+    .chips button {
+      background: transparent; border: 1.5px solid var(--line); color: var(--text); cursor: pointer;
+      font: 500 13px var(--display); padding: 7px 16px; border-radius: 30px; transition: all .2s;
+    }
+    .chips button:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.05); }
+    .chips button.portal-btn { background: var(--accent); border-color: var(--accent); color: var(--cream); font-weight: 600; }
+    .chips button.portal-btn:hover { background: var(--accent-dark); color: #fff; }
+    .stats { display: grid; gap: 10px; margin-top: 22px; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); }
+    .stat { background: var(--panel-2); border: 1.5px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+    .stat b { display: block; font: 700 1.35rem/1.1 var(--mono); color: var(--accent); }
+    .stat span { font: 500 10.5px var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .stat.alive b { color: var(--alive); } .stat.dead b { color: var(--dead); } .stat.unknown b { color: var(--unknown); }
+    .season-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 18px 22px 4px; }
+    .season-chips span { font: 500 12px var(--mono); background: var(--accent-dim); color: var(--accent-dark); padding: 4px 10px; border-radius: 20px; }
+    ul.eps { list-style: none; padding: 8px 22px 22px; }
+    ul.eps li { display: grid; grid-template-columns: 70px 1fr auto; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 14px; }
+    ul.eps .code { font: 700 13px var(--mono); color: var(--accent); }
+    ul.eps em { font-style: normal; color: var(--muted); font-size: 12.5px; }
+    .eps-msg { padding: 40px 22px; text-align: center; color: var(--muted); }
+    @media (max-width: 720px) { ul.eps li { grid-template-columns: 62px 1fr; } ul.eps em { display: none; } }
+
+    /* ===== Episodes section ===== */
+    #episodes { margin-top: 20px; scroll-margin-top: 16px; }
+    #seasonSeg { margin-bottom: 18px; flex-wrap: wrap; }
+    .ep-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+    .ep-card {
+      display: flex; flex-direction: column; gap: 4px; text-align: left; cursor: pointer; font: inherit; color: inherit;
+      background: var(--panel-2); border: 1.5px solid var(--line); border-radius: 10px; padding: 14px 18px;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+    .ep-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 12px 24px rgba(0, 0, 0, .1); }
+    .ep-card .code { font: 700 13px var(--mono); color: var(--accent); }
+    .ep-card .nm { font-weight: 700; font-size: 15px; }
+    .ep-card .meta { font-size: 12.5px; color: var(--muted); }
+    .ep-head { padding: 22px 22px 6px; }
+    .ep-head .code { font: 700 13px var(--mono); color: var(--accent); }
+    .ep-head h2 { font: 700 1.5rem/1.2 var(--mono); margin: 4px 0; }
+    .ep-head .meta { font-size: 13px; color: var(--muted); }
+    .cast { display: grid; gap: 10px; padding: 16px 22px 24px; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+    .cast button { background: none; border: 0; cursor: pointer; font: inherit; color: inherit; text-align: center; }
+    .cast img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; display: block; transition: transform .2s; }
+    .cast button:hover img { transform: scale(1.06); }
+    .cast span { display: block; font-size: 11.5px; margin-top: 4px; line-height: 1.25; }
+
+    /* ===== Intro loading screen ===== */
+    #loader {
+      position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center;
+      background: radial-gradient(circle at 50% 40%, #7a2434 0%, #3a0d17 75%);
+      color: #f5f0e8; font-family: var(--mono);
+      transition: opacity .9s ease, visibility .9s;
+    }
+    #loader.done { opacity: 0; visibility: hidden; }
+    #loader.done .portal { transform: scale(7); }
+    .portal {
+      position: relative; width: 190px; height: 190px; border-radius: 50%;
+      transition: transform .9s cubic-bezier(.6, 0, 1, .6);
+    }
+    .portal .ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: conic-gradient(from 0deg, #f5f0e8, #c98a84, #fff8ee, #c98a84, #f5f0e8);
+      -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%);
+              mask: radial-gradient(circle, transparent 52%, #000 54%);
+      filter: drop-shadow(0 0 14px rgba(245, 240, 232, .6)); animation: spin 2.2s linear infinite;
+    }
+    .portal .ring.r2 { inset: 22px; animation-duration: 1.4s; animation-direction: reverse; opacity: .85; }
+    .portal .ring.r3 { inset: 46px; animation-duration: .9s; opacity: .7; }
+    .portal .core {
+      position: absolute; inset: 62px; border-radius: 50%;
+      background: radial-gradient(circle, #fff8ee 0%, #e3b7ab 45%, transparent 75%);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 50% { transform: scale(1.25); opacity: .7; } }
+    #loader .ltitle {
+      font-weight: 700; font-size: clamp(1.4rem, 5vw, 2.4rem); letter-spacing: .12em;
+      color: #f5f0e8; text-shadow: 0 0 18px rgba(245, 240, 232, .4); text-transform: uppercase;
+    }
+    #loader .lsub { font-size: 13px; letter-spacing: .3em; color: #e3b7ab; text-transform: uppercase; margin-top: -14px; }
+    #lpct { font: 700 clamp(3rem, 12vw, 5.5rem)/1 var(--mono); color: #fff8ee; text-shadow: 0 0 22px rgba(245, 240, 232, .45); }
+    .lbarwrap { width: min(420px, 80vw); height: 6px; border-radius: 6px; background: rgba(245, 240, 232, .2); overflow: hidden; }
+    #lbar { height: 100%; width: 0%; background: linear-gradient(90deg, #c98a84, #f5f0e8, #fff8ee); box-shadow: 0 0 12px rgba(245, 240, 232, .6); }
+    #lmsg { min-height: 1.4em; font-size: 14px; color: #ecd9cf; }
+    body.loading { overflow: hidden; }
   </style>
 </head>
 
-<body>
+<body class="loading">
+  <div id="loader" role="status" aria-live="polite" aria-label="Loading">
+    <div class="portal" aria-hidden="true">
+      <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div><div class="core"></div>
+    </div>
+    <div class="ltitle">Rick and Morty</div>
+    <div class="lsub">Interdimensional Character Dex</div>
+    <div id="lpct">0%</div>
+    <div class="lbarwrap"><div id="lbar"></div></div>
+    <div id="lmsg">Charging the portal gun...</div>
+  </div>
   <header class="topbar">
       <div class="brand">Rick and Morty Character Dex</div>
       <a href="https://rickandmortyapi.com/documentation" target="_blank" rel="noopener">API documentation &#8599;</a>
@@ -284,6 +383,10 @@
 
   <div class="wrap">
     <section class="hero">
+      <div class="banner">
+        <div class="kicker">Dimension C-137 // Citadel Records</div>
+        <h1>Welcome to the multiverse.</h1>
+      </div>
       <div class="controls">
         <label class="search">
           <svg viewBox="0 0 24 24" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -296,6 +399,19 @@
           <button data-v="unknown">Unknown</button>
         </div>
       </div>
+      <div class="chips" id="chips">
+        <button id="epJump">Browse episodes</button>
+        <button class="portal-btn" id="portalBtn">Open a random portal</button>
+      </div>
+    </section>
+
+    <section class="stats" id="stats" aria-label="Multiverse by the numbers">
+      <div class="stat"><b id="st-total">-</b><span>Characters</span></div>
+      <div class="stat alive"><b id="st-alive">-</b><span>Alive</span></div>
+      <div class="stat dead"><b id="st-dead">-</b><span>Dead</span></div>
+      <div class="stat unknown"><b id="st-unknown">-</b><span>Unknown</span></div>
+      <div class="stat"><b id="st-locations">-</b><span>Locations</span></div>
+      <div class="stat"><b id="st-episodes">-</b><span>Episodes</span></div>
     </section>
 
     <div class="section-head"><span class="title">Results</span><span id="countInfo"></span></div>
@@ -308,6 +424,12 @@
       <button id="nextBtn">Next &rarr;</button>
     </div>
 
+
+    <div class="section-head" id="episodes"><span class="title">Episodes</span><span id="epCount"></span></div>
+    <div class="section-divider"></div>
+    <div class="seg" id="seasonSeg" role="group" aria-label="Filter by season"></div>
+    <div class="ep-grid" id="epGrid"><div class="state"><p>Loading episodes...</p></div></div>
+    <div style="height: 72px"></div>
   </div>
 
   <footer>
@@ -323,6 +445,7 @@
     <div class="dlg-head">
       <div class="tabs">
         <button class="on" data-tab="details">Details</button>
+        <button data-tab="episodes">Episodes</button>
         <button data-tab="json">JSON</button>
       </div>
       <button class="x" id="closeBtn" aria-label="Close">&times;</button>
@@ -378,7 +501,6 @@
       try {
         const res = await fetchApiPage(firstApiPage);
 
-        // The API answers 404 when nothing matches the search
         if (res.status === 404) {
           characters = [];
           elCount.textContent = '0 matches';
@@ -443,8 +565,10 @@
     function paintDialog() {
       const c = current;
       if (!c) return;
+      document.querySelector('.dlg-head .tabs').style.visibility = '';
       document.querySelectorAll('.dlg-head .tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
 
+      if (tab === 'episodes') { showEpisodes(c); return; }
       if (tab === 'json') {
         dlgBody.innerHTML = '<pre class="json">' + highlight(c) + '</pre>';
         return;
@@ -475,7 +599,6 @@
       dlg.showModal();
     }
 
-    // Events
     elSearch.addEventListener('input', () => {
       clearTimeout(debounce);
       debounce = setTimeout(() => { page = 1; getCharacters(); }, 350);
@@ -501,12 +624,177 @@
     $('closeBtn').addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 
-    // Scroll to top
     const scrollBtn = $('scrollTop');
     window.addEventListener('scroll', () => scrollBtn.classList.toggle('visible', window.scrollY > 300));
     scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    getCharacters();
+    const BASE = 'https://rickandmortyapi.com/api/';
+
+    (function loadStats() {
+      const jobs = {
+        total: 'character', alive: 'character?status=alive', dead: 'character?status=dead',
+        unknown: 'character?status=unknown', locations: 'location', episodes: 'episode'
+      };
+      Object.entries(jobs).forEach(([key, path]) => {
+        fetch(BASE + path).then(r => r.json()).then(d => { $('st-' + key).textContent = d.info.count; })
+          .catch(() => { $('st-' + key).textContent = '-'; });
+      });
+    })();
+
+    $('chips').addEventListener('click', e => {
+      const b = e.target.closest('button[data-q]');
+      if (!b) return;
+      elSearch.value = b.dataset.q;
+      page = 1;
+      getCharacters();
+    });
+
+    $('portalBtn').addEventListener('click', async () => {
+      const id = 1 + Math.floor(Math.random() * 826);
+      try {
+        const res = await fetch(BASE + 'character/' + id);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        current = await res.json();
+        tab = 'details';
+        paintDialog();
+        dlg.showModal();
+      } catch (err) { /* portal fizzled, try again */ }
+    });
+
+    async function showEpisodes(c) {
+      dlgBody.innerHTML = '<div class="eps-msg">Opening the episode vault...</div>';
+      try {
+        const ids = c.episode.map(u => u.split('/').pop());
+        const res = await fetch(BASE + 'episode/' + ids.join(','));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        let eps = await res.json();
+        if (!Array.isArray(eps)) eps = [eps];
+        if (current !== c || tab !== 'episodes') return; 
+        const seasons = {};
+        eps.forEach(e => { const k = e.episode.slice(0, 3); seasons[k] = (seasons[k] || 0) + 1; });
+        dlgBody.innerHTML =
+          '<div class="season-chips">' + Object.entries(seasons).map(([k, n]) => '<span>' + esc(k) + ' &times; ' + n + '</span>').join('') + '</div>' +
+          '<ul class="eps">' + eps.map(e => '<li><span class="code">' + esc(e.episode) + '</span><span>' + esc(e.name) + '</span><em>' + esc(e.air_date) + '</em></li>').join('') + '</ul>';
+      } catch (err) {
+        if (current === c && tab === 'episodes') dlgBody.innerHTML = '<div class="eps-msg">Could not load episodes. ' + esc(err.message) + '</div>';
+      }
+    }
+
+    let allEps = [], epSeason = '', epShown = null, castList = [];
+
+    async function loadEpisodes() {
+      try {
+        const first = await (await fetch(BASE + 'episode')).json();
+        const rest = await Promise.all(Array.from({ length: first.info.pages - 1 }, (_, i) =>
+          fetch(BASE + 'episode?page=' + (i + 2)).then(r => r.json())));
+        allEps = rest.reduce((all, d) => all.concat(d.results), first.results);
+        const seasons = [...new Set(allEps.map(e => e.episode.slice(0, 3)))];
+        $('seasonSeg').innerHTML = '<button class="on" data-v="">All</button>' +
+          seasons.map(x => '<button data-v="' + x + '">Season ' + parseInt(x.slice(1), 10) + '</button>').join('');
+        renderEpisodes();
+      } catch (err) {
+        $('epGrid').innerHTML = '<div class="state bad"><div class="code">ERR</div><p>Could not load episodes. ' + esc(err.message) + '</p></div>';
+      }
+    }
+
+    function renderEpisodes() {
+      const list = allEps.filter(e => !epSeason || e.episode.startsWith(epSeason));
+      $('epCount').textContent = list.length + (list.length === 1 ? ' episode' : ' episodes');
+      $('epGrid').innerHTML = list.map(e =>
+        '<button class="ep-card" data-id="' + e.id + '"><span class="code">' + esc(e.episode) + '</span>' +
+        '<span class="nm">' + esc(e.name) + '</span>' +
+        '<span class="meta">' + esc(e.air_date) + ' &middot; ' + e.characters.length + ' characters</span></button>').join('');
+    }
+
+    async function openEpisode(id) {
+      const e = allEps.find(x => String(x.id) === String(id));
+      if (!e) return;
+      current = null; epShown = e.id; castList = [];
+      document.querySelector('.dlg-head .tabs').style.visibility = 'hidden';
+      const head = '<div class="ep-head"><div class="code">' + esc(e.episode) + '</div><h2>' + esc(e.name) +
+        '</h2><div class="meta">Aired ' + esc(e.air_date) + ' &middot; ' + e.characters.length + ' characters</div></div>';
+      dlgBody.innerHTML = head + '<div class="eps-msg">Gathering the cast...</div>';
+      dlg.showModal();
+      try {
+        const ids = e.characters.map(u => u.split('/').pop());
+        const res = await fetch(BASE + 'character/' + ids.join(','));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        let cast = await res.json();
+        if (!Array.isArray(cast)) cast = [cast];
+        if (epShown !== e.id || current) return; // user moved on
+        castList = cast;
+        dlgBody.innerHTML = head + '<div class="cast">' + cast.map(c =>
+          '<button data-cid="' + c.id + '"><img src="' + esc(c.image) + '" alt="' + esc(c.name) + '" loading="lazy"><span>' + esc(c.name) + '</span></button>').join('') + '</div>';
+      } catch (err) {
+        if (epShown === e.id && !current) dlgBody.innerHTML = head + '<div class="eps-msg">Could not load the cast. ' + esc(err.message) + '</div>';
+      }
+    }
+
+    $('seasonSeg').addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      $('seasonSeg').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+      epSeason = b.dataset.v;
+      renderEpisodes();
+    });
+    $('epGrid').addEventListener('click', e => {
+      const card = e.target.closest('.ep-card');
+      if (card) openEpisode(card.dataset.id);
+    });
+    dlgBody.addEventListener('click', e => {
+      const b = e.target.closest('button[data-cid]');
+      if (!b) return;
+      const c = castList.find(x => String(x.id) === b.dataset.cid);
+      if (c) { current = c; tab = 'details'; paintDialog(); }
+    });
+    $('epJump').addEventListener('click', () => $('episodes').scrollIntoView({ behavior: 'smooth' }));
+    loadEpisodes();
+
+    const loader = (() => {
+      const el = $('loader'), pct = $('lpct'), bar = $('lbar'), msg = $('lmsg');
+      const steps = [
+        [0, 'Charging the portal gun...'],
+        [12, 'Locating Dimension C-137...'],
+        [28, 'Ignoring Jerry...'],
+        [42, 'Recalibrating the Meeseeks box...'],
+        [56, 'Downloading 826 characters...'],
+        [70, 'Burp... sorry, Rick burped.'],
+        [84, 'Wubba lubba dub dub!'],
+        [96, 'Portal open. Do not touch anything.']
+      ];
+      const MIN = 3200;          
+      const MAX = 9000;          
+      const start = performance.now();
+      let p = 0, ready = false, finished = false;
+
+      function frame() {
+        const t = performance.now() - start;
+        const canFinish = (ready && t >= MIN) || t >= MAX;
+        const target = canFinish ? 100 : Math.min(90, (t / MIN) * 90);
+        p = Math.min(target, p + (canFinish ? 1.6 : 0.9));
+
+        const shown = Math.floor(p);
+        pct.textContent = shown + '%';
+        bar.style.width = p + '%';
+        const line = steps.filter(s => shown >= s[0]).pop();
+        if (line) msg.textContent = line[1];
+
+        if (p >= 100 && !finished) {
+          finished = true;
+          setTimeout(() => {
+            el.classList.add('done');
+            document.body.classList.remove('loading');
+            setTimeout(() => el.remove(), 1000);
+          }, 350);
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      return { ready: () => { ready = true; } };
+    })();
+
+    getCharacters().finally(() => loader.ready());
   </script>
 </body>
 
